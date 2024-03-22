@@ -1,0 +1,2180 @@
+using System;
+internal class Program
+{
+    static List<(string, string)> usuarios = new List<(string, string)>();
+    //código, descripción, cantidad, precio unitario, precio total, unidad de medida
+    static int[] codigo = new int[1000000];
+    static string[] descripcion = new string[1000000];
+    static int[] cantidad = new int[1000000];
+    static decimal[] precio = new decimal[1000000];
+    static decimal[] prcTotal = new decimal[1000000];
+    static int aumento = 0;
+    static int disminucion = 0;
+    static int contador = 7;
+
+    //Para registro de ventas
+    static Dictionary<string, List<(int, string, int, decimal, decimal, string)>> ventas = new Dictionary<string, List<(int, string, int, decimal, decimal, string)>>();
+
+    //Para uso del registro clientes
+    static int[] numeros = new int[10000];
+    static string[] nombres = new string[10000];
+    static string[] apellidos = new string[10000];
+    static string[] nits = new string[10000];
+    static string[] direccion = new string[100000];
+    static int contadorCliente = 3;
+    private static void Main(string[] args)
+    {
+        //llenado inventario inicial
+        codigo[0] = 1; codigo[1] = 2; codigo[2] = 3; codigo[3] = 4; codigo[4] = 5; codigo[5] = 6; codigo[6] = 7;
+        descripcion[0] = "Azucar"; descripcion[1] = "Sal"; descripcion[2] = "Huevos"; descripcion[3] = "Margarina"; descripcion[4] = "Aceite"; descripcion[5] = "Leche"; descripcion[6] = "Arroz";
+        cantidad[0] = 100; cantidad[1] = 200; cantidad[2] = 300; cantidad[3] = 400; cantidad[4] = 500; cantidad[5] = 600; cantidad[6] = 700;
+        precio[0] = 5.50M; precio[1] = 2M; precio[2] = 1.50M; precio[3] = 3.50M; precio[4] = 8M; precio[5] = 12.50M; precio[6] = 4M;
+        //llenado un numero de clientes inicalmente
+        numeros[0] = 1; numeros[1] = 2; numeros[2] = 3;
+        nombres[0] = "Juan"; nombres[1] = "Maria"; nombres[2] = "Pedro";
+        apellidos[0] = "Perez"; apellidos[1] = "Donis"; apellidos[2] = "Lopez";
+        nits[0] = "12345-5"; nits[1] = "67891-9"; nits[2] = "22222-5";
+        direccion[0] = "Santa Cruz, Naranjo"; direccion[1] = "Santa Rosa de Lima"; direccion[2] = "Amberes, Nva Santa Rosa";
+        //para el login
+        usuarios.Add(("Admin", "Admin2023&"));
+        string opcionMenuPrincipal = "";
+        //Creando objeto de Program para llamar los metodos que se usaran
+        Program objeto = new Program();
+    //doWhile para que se repita el MENU PRINCIPAL hasta seleccionara la opcion salir
+    regresar:
+        comprobacionLogin();
+        do
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan; //Estetica
+            //Menu principal
+            Console.Clear();
+            Console.WriteLine("------------------------------------------------");
+            Console.WriteLine("                   MENU PRINCIPAL");
+            Console.WriteLine("------------------------------------------------");
+            Console.WriteLine("------------------------------------------------");
+            Console.WriteLine("1. Catalogos");
+            Console.WriteLine("2. Inventarios");
+            Console.WriteLine("3. Ventas");
+            Console.WriteLine("4. Facturacion");
+            Console.WriteLine("5. Salir");
+            Console.Write("Elija la opcion que necesite: ");
+            opcionMenuPrincipal = Console.ReadLine();
+            //Switch de menu principal
+            string opcionMenuCatalogos = "";
+            switch (opcionMenuPrincipal)
+            {
+                case "1":
+                    do
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.Clear();
+                        Console.WriteLine("------------------------------------------------");
+                        Console.WriteLine("                   MENU CATALOGOS");
+                        Console.WriteLine("------------------------------------------------");
+                        Console.WriteLine("1. Usuarios");
+                        Console.WriteLine("2. Clientes");
+                        Console.WriteLine("3. Poductos");
+                        Console.WriteLine("4. Salir");
+                        Console.Write("Elija opcion: ");
+                        opcionMenuCatalogos = Console.ReadLine();
+                        switch (opcionMenuCatalogos)
+                        {
+                            case "1":
+                                Console.Clear();
+                                Console.WriteLine("------------------------------------------------");
+                                Console.WriteLine("          CATALOGOS USUARIOS");
+                                Console.WriteLine("------------------------------------------------");
+                                int opc = 0;
+                                bool regresar = false;
+                                do
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("-------------------------------------------");
+                                    Console.WriteLine("                MENU USUARIOS");
+                                    Console.WriteLine("-------------------------------------------");
+                                    Console.WriteLine("1. Agregar");
+                                    Console.WriteLine("2. Actualizar");
+                                    Console.WriteLine("3. Consultar");
+                                    Console.WriteLine("4. Eliminar");
+                                    Console.WriteLine("5. Salir");
+                                    Console.WriteLine("¿Que opción desea realizar");
+                                    opc = int.Parse(Console.ReadLine());
+                                    regresar = true;
+                                    switch (opc)
+                                    {
+                                        case 1:
+                                            string opcionAgregarUsuario = "";
+                                            do
+                                            {
+                                                addUsuarios();
+                                                Console.WriteLine("Desea agregar otro usuario? (si/no)");
+                                                opcionAgregarUsuario = Console.ReadLine();
+                                            } while (opcionAgregarUsuario.ToLower() == "si");
+                                            goto regresar;
+                                        case 2:
+                                            string opcionActualizarUsuario = "";
+                                            do
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("-------------------------------------------");
+                                                Console.WriteLine("            ACTUALIZAR USUARIOS");
+                                                Console.WriteLine("-------------------------------------------");
+                                                actualizarUsuarios();
+                                                Console.WriteLine("Desea actualizar otro usuario? (si/no)");
+                                                opcionActualizarUsuario = Console.ReadLine();
+                                            } while (opcionActualizarUsuario.ToLower() == "si");
+                                            break;
+                                        case 3:
+                                            Console.Clear();
+                                            Console.WriteLine("-------------------------------------------");
+                                            Console.WriteLine("            CONSULTAR USUARIOS");
+                                            Console.WriteLine("-------------------------------------------");
+                                            Console.WriteLine("Desea ver todos los usuarios? (si/no)");
+                                            string opcionConsultar = Console.ReadLine();
+                                            if (opcionConsultar.ToLower() == "si")
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("-------------------------------------------");
+                                                Console.WriteLine("            CONSULTAR USUARIOS");
+                                                Console.WriteLine("-------------------------------------------");
+                                                mostrarUsuario();
+                                            }
+                                            else
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("-------------------------------------------");
+                                                Console.WriteLine("            CONSULTAR USUARIOS");
+                                                Console.WriteLine("-------------------------------------------");
+                                                mostrarUsuarioEspecifico();
+                                            }
+                                            Console.ReadKey();
+                                            break;
+                                        case 4:
+                                            Console.Clear();
+                                            Console.WriteLine("-------------------------------------------");
+                                            Console.WriteLine("            ELIMINAR USUARIOS");
+                                            Console.WriteLine("-------------------------------------------");
+                                            eliminarUsuario();
+                                            break;
+                                        case 5:
+                                            Console.Clear();
+                                            Console.WriteLine("-------------------------------------------");
+                                            Console.WriteLine("      SALIENDO DEL CATALOGO USUARIOS");
+                                            Console.WriteLine("-------------------------------------------");
+                                            regresar = false;
+                                            break;
+                                        default:
+                                            Console.Clear();
+                                            Console.WriteLine("-------------------------------------------");
+                                            Console.WriteLine("      INGRESE UNA OPCION VALIDA");
+                                            Console.WriteLine("-------------------------------------------");
+                                            Console.ReadKey();
+                                            break;
+                                    }
+                                } while (regresar);
+                                break;
+                            case "2":
+                                MenuCatalogosClientes();
+                                break;
+                            case "3":
+                                MenuCatalogoProductos();
+                                break;
+                            case "4":
+                                Console.Clear();
+                                Console.WriteLine("------------------------------------------------");
+                                Console.WriteLine("       SALIENDO DE MENU CATALOGOS");
+                                Console.WriteLine("------------------------------------------------");
+                                Console.ReadKey();
+                                break;
+                            default:
+                                Console.Clear();
+                                Console.WriteLine("................................................");
+                                Console.WriteLine("ERROR/: Elija una opcion valida");
+                                Console.WriteLine("................................................");
+                                Console.ReadKey();
+                                break;
+                        }
+                        Console.ResetColor();
+                    } while (opcionMenuCatalogos != "4");
+                    break;
+                case "2":
+                    //LLamando el metodo Inventario
+                    objeto.Inventario();
+                    break;
+                case "3":
+                    //Llamando al metodo ventas
+                    objeto.Ventas();
+                    break;
+                case "4":
+                    menuFacturacion();
+                    break;
+                case "5":
+                    //Mensaje cuando se sale del programa
+                    Console.Clear();
+                    Console.WriteLine("----------------------------------------------");
+                    Console.WriteLine("             SALIENDO DEL PROGRAMA");
+                    Console.WriteLine("----------------------------------------------");
+                    Console.ReadKey();
+                    break;
+                default:
+                    //Mensaje cuando se elije una opcion que no existe
+                    Console.Clear();
+                    Console.WriteLine("----------------------------------------------");
+                    Console.WriteLine("           ELIJA UNA OPCION CORRECTA");
+                    Console.WriteLine("----------------------------------------------");
+                    Console.ReadKey();
+                    break;
+            }
+        } while (opcionMenuPrincipal != "5"); //Fin del doWhile de MENU PRINCIPAL
+        Console.ResetColor();
+    }
+
+    public void Inventario()
+    {
+        //Variable para las opciones de menu inventario
+        string opci = "";
+        do
+        {
+            Console.ForegroundColor = ConsoleColor.Green;//Estetica
+            //MENU INVENTARIO
+            Console.Clear();
+            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("                  MENU INVENTARIO");
+            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("1. Agregar");
+            Console.WriteLine("2. Consultar");
+            Console.WriteLine("3. Salir");
+            Console.Write("Elija una opcion: ");
+            opci = Console.ReadLine();
+            //Switch para el menu inventario
+            switch (opci)
+            {
+                case "1":
+                    string siNoAgregar = "";
+                    int codProducActualizar = 0;
+                    //El doWhile siguiente sirve para repetir el proceso de aumentar o disminuir stock de inventario
+                    do
+                    {
+                        //Se muestran los productos que existen, para que se seleccione alguno
+                        Console.Clear();
+                        Console.WriteLine("----------------------------------------------");
+                        Console.WriteLine("           AGREGAR (MENU INVENTARIO)");
+                        Console.WriteLine("----------------------------------------------");
+                        Console.WriteLine("{0,-5} {1,-20}", "Cod.", "Descripcion");
+                        //Cambiar la condicion para que muestre todos los articulos 7
+                        for (int i = 0; i < contador; i++)
+                        {
+                            Console.WriteLine("{0,-5} {1,-20}", codigo[i], descripcion[i]);
+                        }
+                        Console.Write("Ingrese codigo de producto a actualizar: ");
+                        codProducActualizar = int.Parse(Console.ReadLine());
+                        //Se verifica que el codigo que se esta ingresando este dentro de los codigos que tenemos dentro del array
+                        if (codigo.Contains(codProducActualizar))
+                        {
+                            //Si el codigo ingresado esta dentro del array, hace lo siguiente
+                            Console.Clear();
+                            Console.WriteLine("----------------------------------------------");
+                            Console.WriteLine("           AGREGAR (MENU INVENTARIO)");
+                            Console.WriteLine("----------------------------------------------");
+                            //Pregunta si desea aumentar o disminuir el stock
+                            Console.WriteLine("1. Aumentar Stock");
+                            Console.WriteLine("2. Disminuir Stock");
+                            Console.Write("Elija una opcion: ");
+                            int opcionActualizar = int.Parse(Console.ReadLine());
+                            switch (opcionActualizar)
+                            {
+                                case 1:
+                                    //Opcion de aumentar stock
+                                    aumento = 0;
+                                    //El siguiente doWhile se usa para que se repita el aumento de stock siempre y cuanto la cantidad ingresada sea <= 0
+                                    do
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("----------------------------------------------");
+                                        Console.WriteLine("           AGREGAR (MENU INVENTARIO)");
+                                        Console.WriteLine("----------------------------------------------");
+                                        //Se muestran el producto seleccionado en existencia
+                                        Console.WriteLine("{0,-5} {1,-20} {2,-10}", "Cod.", "Descripcion", "Cantidad");
+                                        Console.WriteLine("{0,-5} {1,-20} {2,-10}", codigo[codProducActualizar - 1], descripcion[codProducActualizar - 1], cantidad[codProducActualizar - 1]);
+                                        Console.Write("Ingrese cantidad (aumentará stock):");
+                                        aumento = int.Parse(Console.ReadLine());
+                                        if (aumento <= 0)
+                                        {
+                                            //Mensaje si la cantidad ingresada es <= 0
+                                            Console.Clear();
+                                            Console.WriteLine("..............................................");
+                                            Console.WriteLine("   /ERROR: No se permiten numero negativos");
+                                            Console.WriteLine("..............................................");
+                                            Console.ReadKey();
+                                        }
+                                    } while (aumento <= 0);//Fin del doWhile 
+                                    cantidad[codProducActualizar - 1] = cantidad[codProducActualizar - 1] + aumento;//Aumentando stock del producto seleccionado
+                                    break;
+                                case 2:
+                                    //Opcion disminucion
+                                    disminucion = 0;
+                                    //El siguiente doWhile se usa para que se repita la disminucion de stock siempre y cuanto la cantidad ingresada sea <= 0
+                                    do
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("----------------------------------------------");
+                                        Console.WriteLine("           AGREGAR (MENU INVENTARIO)");
+                                        Console.WriteLine("----------------------------------------------");
+                                        //Se muestran el producto seleccionado en existencia
+                                        Console.WriteLine("{0,-5} {1,-20} {2,-10}", "Cod.", "Descripcion", "Cantidad");
+                                        Console.WriteLine("{0,-5} {1,-20} {2,-10}", codigo[codProducActualizar - 1], descripcion[codProducActualizar - 1], cantidad[codProducActualizar - 1]);
+                                        Console.Write("Ingrese cantidad (disminuirá stock):");
+                                        disminucion = int.Parse(Console.ReadLine());
+                                        if (disminucion > cantidad[codProducActualizar - 1])
+                                        {
+                                            //Mensaje de error, si la cantidad a disminuir es mayor a el stock del producto
+                                            Console.Clear();
+                                            Console.WriteLine("..............................................");
+                                            Console.WriteLine("   /ERROR: Valor mayor a stock");
+                                            Console.WriteLine("..............................................");
+                                            Console.ReadKey();
+                                            break;
+                                        }
+
+                                        if (disminucion <= 0)
+                                        {
+                                            //Mensaje de error, que no permite disminuir cuando la cnatidad ingresado sea <= 0
+                                            Console.Clear();
+                                            Console.WriteLine("..............................................");
+                                            Console.WriteLine("   /ERROR: No se permiten numero negativos");
+                                            Console.WriteLine("..............................................");
+                                            Console.ReadKey();
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            cantidad[codProducActualizar - 1] = cantidad[codProducActualizar - 1] - disminucion;//Disminuyendo stock del proucto
+                                        }
+                                    } while (disminucion <= 0);//Fin doWHile
+
+                                    break;
+                                default:
+                                    //Mensaje de error, cuando la opcion ingresada no este dentro de los parametros
+                                    Console.Clear();
+                                    Console.WriteLine("..............................................");
+                                    Console.WriteLine("   /ERROR: Opcion incorrecta");
+                                    Console.WriteLine("..............................................");
+                                    Console.ReadKey();
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            //Mensaje de erro, Si el codigo ingresado no esta dentro del array.
+                            Console.Clear();
+                            Console.WriteLine("..............................................");
+                            Console.WriteLine("   /ERROR: No existe el codigo ingresado");
+                            Console.WriteLine("..............................................");
+                            Console.ReadKey();
+                        }
+                        //Comprobacion para verificar si desea hacer otra modificacion en inventario
+                        Console.WriteLine("Desea agregar inventario a otro producto??\nsi/no");
+                        siNoAgregar = Console.ReadLine();
+                        siNoAgregar = siNoAgregar.ToLower();
+                    } while (siNoAgregar == "si");//Fin del doWhile para la opcion de agregar stock a otro producto
+                    break;
+                case "2":
+                    //Opcion Consultar
+                    string opcion3Inventario = "";
+                    Console.Clear();
+                    Console.WriteLine("--------------------------------------------------------------------------------------------");
+                    Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+                    Console.WriteLine("--------------------------------------------------------------------------------------------");
+                    Console.WriteLine("Desea ver el inventario completo??\nsi/no");
+                    opcion3Inventario = Console.ReadLine();
+                    opcion3Inventario = opcion3Inventario.ToLower();
+                    //Si la opcion ingresada es = a "si", se mostrara todo el inventario actual
+                    if (opcion3Inventario == "si")
+                    {
+                        Console.Clear();
+                        Console.WriteLine("--------------------------------------------------------------------------------------------");
+                        Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+                        Console.WriteLine("--------------------------------------------------------------------------------------------");
+                        Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio/u", "Total", "Unidad de Medida");
+                        //EDITAR PARA MOSTRAR SEGUN LOS QUE DESEA MOSTRAR
+                        for (int i = 0; i < contador; i++)
+                        {
+                            //Mostrando inventario actual
+                            Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", codigo[i], descripcion[i], cantidad[i], "Q" + precio[i], ("Q" + (prcTotal[i] = precio[i] * cantidad[i])), "Unidades");
+                        }
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        //Opcion ingresado = "no"
+                        Console.Clear();
+                        Console.WriteLine("--------------------------------------------------------------------------------------------");
+                        Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+                        Console.WriteLine("--------------------------------------------------------------------------------------------");
+                        Console.WriteLine("{0,-5} {1,-20}", "Cod.", "Descripcion");
+                        for (int i = 0; i < contador; i++)
+                        {
+                            //Mostrando los productos y codigos unicamente
+                            Console.WriteLine("{0,-5} {1,-20}", codigo[i], descripcion[i]);
+                        }
+                        Console.Write("Ingrese codigo de producto a consultar: ");
+                        int codProducConsultar = int.Parse(Console.ReadLine());
+                        if (codigo.Contains(codProducConsultar))
+                        {
+                            //Entra a la seccion de codigo cuando el codigo ingresado esta dentro del array.
+                            Console.Clear();
+                            Console.WriteLine("--------------------------------------------------------------------------------------------");
+                            Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+                            Console.WriteLine("--------------------------------------------------------------------------------------------");
+                            //Mostrando unico producto, el que se desea ver
+                            Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio/u", "Total", "Unidad de Medida");
+                            Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", codigo[codProducConsultar - 1], descripcion[codProducConsultar - 1], cantidad[codProducConsultar - 1], "Q" + precio[codProducConsultar - 1], ("Q" + (prcTotal[codProducConsultar - 1] = precio[codProducConsultar - 1] * cantidad[codProducConsultar - 1])), "Unidades");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            //Mensaje de error, cuando el codigo ingresando no este dentro del array.
+                            Console.Clear();
+                            Console.WriteLine("..............................................");
+                            Console.WriteLine("   /ERROR: No existe el codigo ingresado");
+                            Console.WriteLine("..............................................");
+                            Console.ReadKey();
+                        }
+                    }
+
+                    break;
+                case "3":
+                    //Saliendo del metodo y menu inventario
+                    Console.Clear();
+                    Console.WriteLine("----------------------------------------------");
+                    Console.WriteLine("           SALIENDO DE MENU INVENTARIO");
+                    Console.WriteLine("----------------------------------------------");
+                    Console.ReadKey();
+                    break;
+                default:
+                    //Mensaje de error, cuando se ingreso una opcion incorrecta en el menu inventario
+                    Console.Clear();
+                    Console.WriteLine("----------------------------------------------");
+                    Console.WriteLine("/ERROR: SELECCIONE UNA OPCION CORRECTA.");
+                    Console.WriteLine("----------------------------------------------");
+                    Console.ReadKey();
+                    break;
+            }
+        } while (opci != "3");//Fin del doWhile, sobre el menu principal de MENU INVENTARIO
+        Console.ResetColor();
+    }
+
+    public void Ventas()
+    {
+        string opcionVentas = "";
+        Random NoSerie = new Random();
+        Console.ForegroundColor = ConsoleColor.Blue;
+        int cantVentas = 0;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("                   MENU VENTAS");
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("1. Agregar");
+            Console.WriteLine("2. Actualizar");
+            Console.WriteLine("3. Consultar");
+            Console.WriteLine("4. Salir");
+            Console.Write("Ingrese opcion: ");
+            opcionVentas = Console.ReadLine();
+            var productos = new List<(int, string, int, decimal, decimal, string)>();
+            switch (opcionVentas)
+            {
+
+                case "1":
+
+                    string opcionVentasAgregar = "";
+
+                    string correlativoVenta = GenerarCodigoVenta(NoSerie);
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("-------------------------------------------");
+                        Console.WriteLine("            AGREGAR (MENU VENTAS)");
+                        Console.WriteLine("-------------------------------------------");
+                        Console.WriteLine("{0,-5} {1,-20} {2,-10}", "Cod.", "Descripcion", "Cantidad");
+                        for (int i = 0; i < contador; i++)
+                        {
+                            Console.WriteLine("{0,-5} {1,-20} {2,-10}", codigo[i], descripcion[i], cantidad[i]);
+                        }
+                        Console.Write("Ingrese codigo del producto a comprar:");
+                        int codigoVenta = int.Parse(Console.ReadLine());
+                        bool codigoExistente = false;
+                        foreach (int elemento in codigo)
+                        {
+                            if (elemento == codigoVenta)
+                            {
+                                codigoExistente = true;
+                                break;
+                            }
+                        }
+                        if (!codigoExistente)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("................................................");
+                            Console.WriteLine("ERROR/: No existe ese codigo de producto");
+                            Console.WriteLine("................................................");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.Write("Cuanto se va a comprar: ");
+                            cantVentas = int.Parse(Console.ReadLine());
+                            if (cantVentas > cantidad[codigoVenta - 1])
+                            {
+                                Console.Clear();
+                                Console.WriteLine("................................................");
+                                Console.WriteLine("ERROR/: No alcanza stock");
+                                Console.WriteLine("................................................");
+                            }
+                            else if (cantVentas <= 0)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("................................................");
+                                Console.WriteLine("ERROR/: Cantidad negativa");
+                                Console.WriteLine("................................................");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                //static Dictionary<string, (int, string, int, decimal, decimal, string)> ventas = new Dictionary<string, (int, string, int, decimal, decimal, string)>();
+                                cantidad[codigoVenta - 1] = (cantidad[codigoVenta - 1] - cantVentas);
+                                productos.Add((codigoVenta, descripcion[codigoVenta - 1], cantVentas, precio[codigoVenta - 1], (precio[codigoVenta - 1] * cantVentas), "Unidades"));
+
+                            }
+                        }
+
+                        Console.WriteLine("Desea agregar otro producto a la Venta " + correlativoVenta + ": (si/no)");
+                        opcionVentasAgregar = Console.ReadLine();
+                    } while (opcionVentasAgregar.ToLower() == "si");
+                    ventas.Add(correlativoVenta, productos);
+                    break;
+
+                case "2":
+                    Console.Clear();
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("           ACTUALIZAR (MENU VENTAS)");
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("Que venta se modificara??");
+                    foreach (var venta in ventas)
+                    {
+                        Console.WriteLine("Venta No. " + venta.Key);
+                    }
+                    Console.Write("Ingrese No. de Serie: ");
+                    string correlativoVentaModificar = Console.ReadLine();
+                    Console.Clear();
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("           ACTUALIZAR (MENU VENTAS)");
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("1. Modificar venta");
+                    Console.WriteLine("2. Agregar productos a la venta");
+                    string opcionModAgrActualizar = Console.ReadLine();
+                    switch (opcionModAgrActualizar)
+                    {
+                        case "1":
+                            if (ventas.ContainsKey(correlativoVentaModificar))
+                            {
+                                string opcionActualizarVenta = "";
+                                do
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("-------------------------------------------");
+                                    Console.WriteLine("           ACTUALIZAR (MENU VENTAS)");
+                                    Console.WriteLine("-------------------------------------------");
+                                    var productosVentas = ventas[correlativoVentaModificar];
+                                    Console.WriteLine("Venta No. " + correlativoVentaModificar);
+                                    Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio", "Subtotal", "Medida");
+                                    foreach (var producto in productosVentas)
+                                    {
+                                        Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10} {5,-10}", producto.Item1, producto.Item2, producto.Item3, producto.Item4, producto.Item5, producto.Item6);
+                                    }
+
+                                    Console.WriteLine("-------------------------------------------");
+                                    Console.Write("Ingrese el código del producto a actualizar: ");
+                                    int codigoProductoModificar = int.Parse(Console.ReadLine());
+
+                                    var productoModificar = productosVentas.FindIndex(p => p.Item1 == codigoProductoModificar);
+                                    if (productoModificar != -1)
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("-------------------------------------------");
+                                        Console.WriteLine("       Actualizar producto seleccionado");
+                                        Console.WriteLine("-------------------------------------------");
+                                        Console.WriteLine("Ingrese los nuevos datos del producto:");
+                                        Console.Write("Nueva cantidad: ");
+                                        int nuevaCantidad = int.Parse(Console.ReadLine());
+                                        if (nuevaCantidad < cantidad[codigoProductoModificar - 1] && nuevaCantidad >= 0)
+                                        {
+                                            var productoActualizado = productosVentas[productoModificar];
+                                            productoActualizado.Item2 = descripcion[codigoProductoModificar - 1];
+                                            cantidad[codigoProductoModificar - 1] = cantidad[codigoProductoModificar - 1] + productoActualizado.Item3 - nuevaCantidad;
+                                            productoActualizado.Item3 = nuevaCantidad;
+                                            productoActualizado.Item4 = precio[codigoProductoModificar - 1];
+                                            productoActualizado.Item5 = precio[codigoProductoModificar - 1] * nuevaCantidad;
+                                            productoActualizado.Item6 = "Unidades";
+
+                                            productosVentas[productoModificar] = productoActualizado;
+
+                                            ventas[correlativoVentaModificar] = productosVentas;
+                                            Console.WriteLine("------------------------------------------");
+                                            Console.WriteLine("    Producto actualizado exitosamente.");
+                                            Console.WriteLine("------------------------------------------");
+                                        }
+                                        else
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("...............................................");
+                                            Console.WriteLine("ERROR/: No hay suficiente stock.");
+                                            Console.WriteLine("...............................................");
+                                            Console.ReadKey();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("...............................................");
+                                        Console.WriteLine("ERROR/: Producto no encontrado en la venta.");
+                                        Console.WriteLine("...............................................");
+                                        Console.ReadKey();
+                                    }
+                                    Console.WriteLine("Desea modificar otro producto: (si/no)");
+                                    opcionActualizarVenta = Console.ReadLine();
+                                } while (opcionActualizarVenta.ToLower() == "si");
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                Console.WriteLine("...............................................");
+                                Console.WriteLine("ERROR/: No existe ese número de correlativo.");
+                                Console.WriteLine("...............................................");
+                                Console.ReadKey();
+                            }
+                            break;
+                        case "2":
+                            if (ventas.ContainsKey(correlativoVentaModificar))
+                            {
+                                string opcionActualizarVenta = "";
+                                do
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("-------------------------------------------");
+                                    Console.WriteLine("           ACTUALIZAR (MENU VENTAS)");
+                                    Console.WriteLine("-------------------------------------------");
+                                    var productosVentas = ventas[correlativoVentaModificar];
+
+                                    Console.WriteLine("{0,-5} {1,-20}", "Cod.", "Descripcion");
+                                    //Cambiar la condicion para que muestre todos los articulos
+                                    for (int i = 0; i < contador; i++)
+                                    {
+                                        Console.WriteLine("{0,-5} {1,-20}", codigo[i], descripcion[i]);
+                                    }
+                                    Console.WriteLine("-------------------------------------------");
+                                    Console.Write("Ingrese el código del producto a agregar: ");
+                                    int codigoProductoAgregar = int.Parse(Console.ReadLine());
+
+                                    // Verificar si el producto ya existe en la venta
+                                    var productoExistente = productosVentas.Find(p => p.Item1 == codigoProductoAgregar);
+                                    if (productoExistente != default)
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("-------------------------------------------");
+                                        Console.WriteLine("    El producto ya existe en la venta.");
+                                        Console.WriteLine("-------------------------------------------");
+                                        Console.ReadKey();
+                                    }
+                                    else
+                                    {
+                                        int nuevaCantidad = 0;
+                                        do
+                                        {
+                                            // Agregar el nuevo producto a la venta
+                                            Console.Write("Ingrese la cantidad a agregar: ");
+                                            nuevaCantidad = int.Parse(Console.ReadLine());
+                                            if (nuevaCantidad <= 0)
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("......................................");
+                                                Console.WriteLine("ERROR/: Cantidad invalida");
+                                                Console.WriteLine("......................................");
+                                                Console.ReadKey();
+                                                break;
+                                            }
+                                            else if (cantidad[codigoProductoAgregar - 1] < nuevaCantidad)
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("......................................");
+                                                Console.WriteLine("ERROR/: No hay suficiente stock");
+                                                Console.WriteLine("......................................");
+                                                Console.ReadKey();
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                cantidad[codigoProductoAgregar - 1] = cantidad[codigoProductoAgregar - 1] - nuevaCantidad;
+                                            }
+                                        } while (nuevaCantidad <= 0);
+
+                                        // SE DEBE MODIFICAR SEGUN LO QUE SE TENGA EN INVENTARIO
+                                        if (codigoProductoAgregar >= 1 && codigoProductoAgregar <= contador)
+                                        {
+                                            // Obtener los detalles del producto
+                                            string descripcionProducto = descripcion[codigoProductoAgregar - 1];
+                                            decimal precioProducto = precio[codigoProductoAgregar - 1];
+                                            decimal subtotalProducto = precioProducto * nuevaCantidad;
+                                            string medidaProducto = "Unidades";
+                                            if (cantidad[codigoProductoAgregar - 1] < nuevaCantidad || nuevaCantidad < 0)
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("------------------------------------------");
+                                                Console.WriteLine("ERROR/: Producto no agregado.");
+                                                Console.WriteLine("------------------------------------------");
+                                                Console.ReadKey();
+                                            }
+                                            else
+                                            {
+                                                // Agregar el nuevo producto a la lista de productos de la venta
+                                                productosVentas.Add((codigoProductoAgregar, descripcionProducto, nuevaCantidad, precioProducto, subtotalProducto, medidaProducto));
+
+                                                // Actualizar la lista de productos de la venta en el diccionario de ventas
+                                                ventas[correlativoVentaModificar] = productosVentas;
+                                                Console.Clear();
+                                                Console.WriteLine("------------------------------------------");
+                                                Console.WriteLine("MENSAJE/: Producto agregado exitosamente.");
+                                                Console.WriteLine("------------------------------------------");
+                                                Console.ReadKey();
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            Console.Clear();
+                                            Console.WriteLine("...............................................");
+                                            Console.WriteLine("ERROR/: Código de producto no válido.");
+                                            Console.WriteLine("...............................................");
+                                            Console.ReadKey();
+                                        }
+                                    }
+
+                                    Console.WriteLine("Desea agregar otro producto: (si/no)");
+                                    opcionActualizarVenta = Console.ReadLine();
+                                } while (opcionActualizarVenta.ToLower() == "si");
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                Console.WriteLine("...............................................");
+                                Console.WriteLine("ERROR/: No existe ese número de correlativo.");
+                                Console.WriteLine("...............................................");
+                                Console.ReadKey();
+                            }
+                            break;
+                        default:
+                            Console.Clear();
+                            Console.WriteLine("...............................................");
+                            Console.WriteLine("ERROR/: Elija una opcion correcta");
+                            Console.WriteLine("...............................................");
+                            Console.ReadKey();
+                            break;
+                    }
+                    break;
+
+                case "3":
+
+
+                    Console.Clear();
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("           CONSULTAR (MENU VENTAS)");
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("1. Consultar venta en especifico");
+                    Console.WriteLine("2. Ver todas las ventas");
+                    int opcionConsultarVentas = int.Parse(Console.ReadLine());
+                    switch (opcionConsultarVentas)
+                    {
+                        case 1:
+                            Console.Clear();
+                            Console.WriteLine("----------------------------------------------------------------------------------");
+                            Console.WriteLine("CONSULTAR VENTA EN ESPECIFICO (MENU VENTAS)");
+                            Console.WriteLine("----------------------------------------------------------------------------------");
+                            Console.Clear();
+                            foreach (var venta in ventas)
+                            {
+                                Console.WriteLine("Venta No. " + venta.Key + "\n");
+                            }
+                            Console.Write("Ingrese el correlativo de la venta a consultar: ");
+                            string correlativoVentaConsultar = Console.ReadLine();
+                            if (ventas.ContainsKey(correlativoVentaConsultar))
+                            {
+                                Console.Clear();
+                                var productosVentas = ventas[correlativoVentaConsultar];
+                                Console.WriteLine("----------------------------------------------------------------------------------");
+                                Console.WriteLine("Ventas No. " + correlativoVentaConsultar);
+                                Console.WriteLine("----------------------------------------------------------------------------------");
+                                Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio", "Subtotal", "Medida");
+                                foreach (var producto in productosVentas)
+                                {
+                                    Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10} {5,-10}", producto.Item1, producto.Item2, producto.Item3, producto.Item4, producto.Item5, producto.Item6);
+                                }
+                                Console.WriteLine("----------------------------------------------------------------------------------");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                Console.WriteLine("..............................................");
+                                Console.WriteLine("ERROR/: No existe ese número de correlativo.");
+                                Console.WriteLine("..............................................");
+                                Console.ReadKey();
+                            }
+                            break;
+                        case 2:
+                            Console.Clear();
+                            Console.WriteLine("----------------------------------------------------------------------------------");
+                            Console.WriteLine("      CONSULTAR VENTAS(MENU VENTAS)");
+                            Console.WriteLine("----------------------------------------------------------------------------------");
+                            foreach (var venta in ventas)
+                            {
+                                var productosVentas = ventas[venta.Key];
+                                Console.WriteLine("----------------------------------------------------------------------------------");
+                                Console.WriteLine("Venta No. " + venta.Key + "\n");
+                                Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio", "Subtotal", "Medida");
+                                foreach (var producto in productosVentas)
+                                {
+                                    Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10} {5,-10}", producto.Item1, producto.Item2, producto.Item3, producto.Item4, producto.Item5, producto.Item6);
+                                }
+                                Console.WriteLine("----------------------------------------------------------------------------------\n");
+                            }
+                            Console.ReadKey();
+                            break;
+                    }
+                    break;
+                case "4":
+                    Console.Clear();
+                    Console.WriteLine("-------------------------------------------");
+                    Console.WriteLine("       SALIENDO DE MENU VENTAS");
+                    Console.WriteLine("-------------------------------------------");
+                    Console.ReadKey();
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("...........................................");
+                    Console.WriteLine("ERROR/: Opcion inexistente");
+                    Console.WriteLine("...........................................");
+                    Console.ReadKey();
+                    break;
+            }
+        } while (opcionVentas != "4");
+        Console.ResetColor();
+    }
+
+    static string GenerarCodigoVenta(Random random)
+    {
+        string codigoVenta = "";
+
+        // Generar 2 dígitos aleatorios
+        int numero1 = random.Next(9);
+        int numero2 = random.Next(9);
+
+        // Generar 1 letra aleatoria
+        char letra = (char)random.Next('A', 'Z' + 1);
+
+        // Generar 2 dígitos aleatorios
+        int numero3 = random.Next(9);
+        int numero4 = random.Next(9);
+
+        // Generar 1 letra y 1 dígito aleatorios
+        char letra1 = (char)random.Next('A', 'Z' + 1);
+        int numero6 = random.Next(9);
+
+        // Construir el código de venta
+        codigoVenta = numero1.ToString() + numero2.ToString() + letra + numero3.ToString() + numero4.ToString() + "-" + letra1.ToString() + numero6.ToString();
+
+        return codigoVenta;
+    }
+
+    static void MenuCatalogosClientes()
+    {
+        string opcionClientes = "";
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine("          CATALOGO CLIENTES");
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine("1. Agregar");
+            Console.WriteLine("2. Actualizar");
+            Console.WriteLine("3. Consultar");
+            Console.WriteLine("4. Eliminar");
+            Console.WriteLine("5. Salir");
+            Console.Write("Seleccione una opcion: ");
+            opcionClientes = Console.ReadLine();
+            switch (opcionClientes)
+            {
+                case "1":
+                    string opcionSeguirAgregandoCliente = "";
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("---------------------------------------");
+                        Console.WriteLine("          AGREGAR CLIENTES");
+                        Console.WriteLine("---------------------------------------");
+                        AgregarCliente();
+                        Console.WriteLine("Desea agregar otro cliente? (si/no)");
+                        opcionSeguirAgregandoCliente = Console.ReadLine();
+                    } while (opcionSeguirAgregandoCliente.ToLower() == "si");
+                    break;
+                case "2":
+                    string opcionSeguirActualizandoCliente = "";
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("---------------------------------------");
+                        Console.WriteLine("          ACTUALIZAR CLIENTES");
+                        Console.WriteLine("---------------------------------------");
+                        ActualizarCliente();
+                        Console.WriteLine("Desea actulizar datos de otro cliente? (si/no)");
+                        opcionSeguirActualizandoCliente = Console.ReadLine();
+                    } while (opcionSeguirActualizandoCliente.ToLower() == "si");
+                    break;
+                case "3":
+                    Console.Clear();
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("          CONSULTAR CLIENTES");
+                    Console.WriteLine("---------------------------------------");
+                    ConsultarCliente();
+                    Console.ReadKey();
+                    break;
+                case "4":
+                    Console.Clear();
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("          ELIMINAR CLIENTES");
+                    Console.WriteLine("---------------------------------------");
+                    EliminarCliente();
+                    break;
+                case "5":
+                    Console.Clear();
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("     SALIENDO DE CATALOGO CLIENTES");
+                    Console.WriteLine("---------------------------------------");
+                    Console.ReadKey();
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("................................................");
+                    Console.WriteLine("ERROR/: Elija una opcion correcta");
+                    Console.WriteLine("................................................");
+                    Console.ReadKey();
+                    break;
+
+            }
+        } while (opcionClientes != "5");
+        Console.ResetColor();
+    }
+
+    static void MostrarElementos()
+    {
+        Console.WriteLine("No.    Nombre ");
+        for (int i = 0; i < contadorCliente; i++)
+        {
+            if (numeros[i] == 0)
+                break;
+
+            Console.WriteLine($"{numeros[i],-6} {nombres[i],-12}");
+        }
+    }
+
+    static void EliminarCliente()
+    {
+        MostrarElementos();
+        Console.WriteLine("Ingrese el No. de cliente a eliminar:");
+        int numeroEliminar = int.Parse(Console.ReadLine());
+        //para encontrar el indice del array
+        int indiceEliminar = Array.IndexOf(numeros, numeroEliminar);
+        Console.WriteLine("Esta seguro de eliminar el cliente? (si/no)");
+        string opcionRespaldo = Console.ReadLine();
+        if (opcionRespaldo.ToLower() == "si")
+        {
+            if (indiceEliminar != -1)
+            {
+                /* Array.Copy: Es un método que copia elementos de un arreglo a otro arreglo.
+                 * numeros: Es el arreglo de origen, es decir, el arreglo del cual queremos copiar los elementos.
+                 * indiceEliminar + 1: Es la posición a partir de la cual queremos comenzar a copiar los elementos. En este caso, es la 
+                 * posición siguiente al cliente que queremos eliminar. 
+                 * numeros: Es el arreglo de destino, es decir, el arreglo en el cual queremos colocar los elementos copiados.
+                 * indiceEliminar: Es la posición en la que queremos colocar los elementos copiados. En este caso, es la posición
+                 * del cliente que queremos eliminar.
+                 * numeros.Length - indiceEliminar - 1: Es la cantidad de elementos que queremos copiar. Restamos indiceEliminar 
+                 * de la longitud total del arreglo numeros y luego restamos 1 para no incluir el cliente que estamos eliminando.
+                 */
+                Array.Copy(numeros, indiceEliminar + 1, numeros, indiceEliminar, numeros.Length - indiceEliminar - 1);
+                Array.Copy(nombres, indiceEliminar + 1, nombres, indiceEliminar, nombres.Length - indiceEliminar - 1);
+                Array.Copy(apellidos, indiceEliminar + 1, apellidos, indiceEliminar, apellidos.Length - indiceEliminar - 1);
+                Array.Copy(nits, indiceEliminar + 1, nits, indiceEliminar, nits.Length - indiceEliminar - 1);
+                Array.Copy(direccion, indiceEliminar + 1, direccion, indiceEliminar, direccion.Length - indiceEliminar - 1);
+                contadorCliente--;
+                Console.WriteLine("---------------------------------------");
+                Console.WriteLine("MENSAJE: Cliente eliminado exitosamente");
+                Console.WriteLine("---------------------------------------");
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine("...............................................................");
+                Console.WriteLine("ERROR/: No se encontró el cliente con el número especificado");
+                Console.WriteLine("...............................................................");
+                Console.ReadKey();
+            }
+        }
+        else
+        {
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine("MENSAJE: No se elimino el cliente");
+            Console.WriteLine("---------------------------------------");
+            Console.ReadKey();
+        }
+    }
+
+    static void AgregarCliente()
+    {
+        // Agregar un nuevo cliente
+        Console.WriteLine("Ingrese los datos del nuevo cliente:");
+        Console.Write("No.: ");
+        string nuevoNumeroString = Console.ReadLine();
+        if (string.IsNullOrEmpty(nuevoNumeroString) || string.IsNullOrWhiteSpace(nuevoNumeroString))
+        {
+            Console.WriteLine(".............................................");
+            Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+            Console.WriteLine(".............................................");
+            Console.ReadKey();
+        }
+        else
+        {
+
+            bool exito = int.TryParse(nuevoNumeroString, out int nuevoNumero);
+            int indiceAgregar = Array.IndexOf(numeros, nuevoNumero);
+            if (indiceAgregar == -1)
+            {
+                Console.Write("Nombre: ");
+                string nuevoNombre = Console.ReadLine();
+                if (string.IsNullOrEmpty(nuevoNombre) || string.IsNullOrWhiteSpace(nuevoNombre))
+                {
+                    Console.WriteLine(".............................................");
+                    Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                    Console.WriteLine(".............................................");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.Write("Apellido: ");
+                    string nuevoApellido = Console.ReadLine();
+                    if (string.IsNullOrEmpty(nuevoApellido) || string.IsNullOrWhiteSpace(nuevoApellido))
+                    {
+                        Console.WriteLine(".............................................");
+                        Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                        Console.WriteLine(".............................................");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        Console.Write("NIT: ");
+                        string nuevoNit = Console.ReadLine();
+                        if (string.IsNullOrEmpty(nuevoNit) || string.IsNullOrWhiteSpace(nuevoNit))
+                        {
+                            Console.WriteLine(".............................................");
+                            Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                            Console.WriteLine(".............................................");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.Write("Direccion: ");
+                            string nuevaDireccion = Console.ReadLine();
+                            if (string.IsNullOrEmpty(nuevaDireccion) || string.IsNullOrWhiteSpace(nuevaDireccion))
+                            {
+                                Console.WriteLine(".............................................");
+                                Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                                Console.WriteLine(".............................................");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                numeros[contadorCliente] = nuevoNumero;
+                                nombres[contadorCliente] = nuevoNombre;
+                                apellidos[contadorCliente] = nuevoApellido;
+                                nits[contadorCliente] = nuevoNit;
+                                direccion[contadorCliente] = nuevaDireccion;
+                                contadorCliente++;
+                            }
+                        }
+
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine(".............................................");
+                Console.WriteLine("ERROR/: NUMERO DE CLIENTE INVALIDO");
+                Console.WriteLine("Ya existe cliente asignado para ese numero");
+                Console.WriteLine(".............................................");
+                Console.ReadKey();
+            }
+        }
+    }
+
+    static void ActualizarCliente()
+    {
+        MostrarElementos();
+        Console.WriteLine("Ingrese el numero de cliente a actualizar: ");
+        int numCliente = int.Parse(Console.ReadLine());
+        int indiceActualiza = Array.IndexOf(numeros, numCliente);
+        if (indiceActualiza != -1)
+        {
+            Console.WriteLine("Ingrese los datos del nuevo cliente:");
+            Console.Write("No.: ");
+            string nuevoNumeroString = Console.ReadLine();
+
+            if (string.IsNullOrEmpty(nuevoNumeroString) || string.IsNullOrWhiteSpace(nuevoNumeroString))
+            {
+                Console.WriteLine(".............................................");
+                Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                Console.WriteLine(".............................................");
+                Console.ReadKey();
+            }
+            else
+            {
+                bool exito = int.TryParse(nuevoNumeroString, out int nuevoNumero);
+                int indiceActualizaComprobar = Array.IndexOf(numeros, nuevoNumero);
+                if (indiceActualizaComprobar != -1)
+                {
+                    Console.WriteLine(".......................................");
+                    Console.WriteLine("ERROR/: Ya existe un cliente asignado\n      para ese numero");
+                    Console.WriteLine(".......................................");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.Write("Nombre: ");
+                    string nuevoNombre = Console.ReadLine();
+                    if (string.IsNullOrEmpty(nuevoNombre) || string.IsNullOrWhiteSpace(nuevoNombre))
+                    {
+                        Console.WriteLine(".............................................");
+                        Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                        Console.WriteLine(".............................................");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        Console.Write("Apellido: ");
+                        string nuevoApellido = Console.ReadLine();
+                        if (string.IsNullOrEmpty(nuevoApellido) || string.IsNullOrWhiteSpace(nuevoApellido))
+                        {
+                            Console.WriteLine(".............................................");
+                            Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                            Console.WriteLine(".............................................");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.Write("NIT: ");
+                            string nuevoNit = Console.ReadLine();
+                            if (string.IsNullOrEmpty(nuevoNit) || string.IsNullOrWhiteSpace(nuevoNit))
+                            {
+                                Console.WriteLine(".............................................");
+                                Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                                Console.WriteLine(".............................................");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                Console.Write("Direccion: ");
+                                string direccionNueva = Console.ReadLine();
+                                if (string.IsNullOrEmpty(nuevoNit) || string.IsNullOrWhiteSpace(nuevoNit))
+                                {
+                                    Console.WriteLine(".............................................");
+                                    Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                                    Console.WriteLine(".............................................");
+                                    Console.ReadKey();
+                                }
+                                else
+                                {
+                                    numeros[indiceActualiza] = nuevoNumero;
+                                    nombres[indiceActualiza] = nuevoNombre;
+                                    apellidos[indiceActualiza] = nuevoApellido;
+                                    nits[indiceActualiza] = nuevoNit;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("..............................................");
+            Console.WriteLine("ERROR/: No se encontro cliente con ese numero");
+            Console.WriteLine("..............................................");
+            Console.ReadKey();
+        }
+
+    }
+
+    static void ConsultarCliente()
+    {
+        Console.WriteLine("Desea ver todo el catalogo de clientes? (si/no)");
+        string opcionVerClientes = Console.ReadLine();
+        if (opcionVerClientes != "si")
+        {
+            MostrarElementos();
+            Console.Write("Ingrese No. de cliente a ver: ");
+            int numeroClienteVer = int.Parse(Console.ReadLine());
+            int indiceConsultar = Array.IndexOf(numeros, numeroClienteVer);
+            if (indiceConsultar != -1)
+            {
+                Console.WriteLine("No.\tNombre\tApellido\tNIT\t\tDireccion");
+                Console.WriteLine($"{numeros[indiceConsultar]}\t{nombres[indiceConsultar]}\t{apellidos[indiceConsultar]}\t\t{nits[indiceConsultar]}\t\t{direccion[indiceConsultar]}");
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("................................................");
+                Console.WriteLine("ERROR/: Numero de cliente inexistente");
+                Console.WriteLine("................................................");
+            }
+        }
+        else
+        {
+            Console.WriteLine("No.\tNombre\tApellido\tNIT\t\tDireccion");
+            for (int i = 0; i < contadorCliente; i++)
+            {
+                if (numeros[i] == 0)
+                    break;
+
+                Console.WriteLine($"{numeros[i]}\t{nombres[i]}\t{apellidos[i]}\t\t{nits[i]}\t\t{direccion[i]}");
+            }
+        }
+
+    }
+
+    static void MenuCatalogoProductos()
+    {
+        string opcionCatalogoProducto = "";
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine("          CATALOGO PRODUCTOS");
+            Console.WriteLine("---------------------------------------");
+            Console.WriteLine("1. Agregar");
+            Console.WriteLine("2. Actualizar");
+            Console.WriteLine("3. Consultar");
+            Console.WriteLine("4. Eliminar");
+            Console.WriteLine("5. Salir");
+            Console.Write("Seleccione una opcion: ");
+            opcionCatalogoProducto = Console.ReadLine();
+            switch (opcionCatalogoProducto)
+            {
+                case "1":
+
+                    string opcionAgregarProducto = "";
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("---------------------------------------");
+                        Console.WriteLine("           AGREGAR PRODUCTOS");
+                        Console.WriteLine("---------------------------------------");
+                        AgregarProducto();
+                        Console.WriteLine("Desea agregar otro producto? (si/no)");
+                        opcionAgregarProducto = Console.ReadLine();
+                    } while (opcionAgregarProducto.ToLower() == "si");
+                    break;
+                case "2":
+                    string opcionActualizarProducto = "";
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine("---------------------------------------");
+                        Console.WriteLine("           ACTUALIZAR PRODUCTOS");
+                        Console.WriteLine("---------------------------------------");
+                        ActualizarProducto();
+                        Console.WriteLine("Desea actualizar otro producto? (si/no)");
+                        opcionActualizarProducto = Console.ReadLine();
+                    } while (opcionActualizarProducto.ToLower() == "si");
+                    break;
+                case "3":
+                    Console.Clear();
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("           CONSULTAR PRODUCTOS");
+                    Console.WriteLine("---------------------------------------");
+                    ConsultarProducto();
+                    Console.ReadKey();
+                    break;
+                case "4":
+                    Console.Clear();
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("           ELIMINAR PRODUCTOS");
+                    Console.WriteLine("---------------------------------------");
+                    EliminarProducto();
+                    Console.ReadKey();
+                    break;
+                case "5":
+                    Console.Clear();
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine("     SALIENDO DE CATALOGO PRODUCTOS");
+                    Console.WriteLine("---------------------------------------");
+                    Console.ReadKey();
+                    break;
+                default:
+                    Console.Clear();
+                    Console.WriteLine("................................................");
+                    Console.WriteLine("ERROR/: Elija una opcion correcta");
+                    Console.WriteLine("................................................");
+                    Console.ReadKey();
+                    break;
+            }
+        } while (opcionCatalogoProducto != "5");
+        Console.ResetColor();
+    }
+
+    static void EliminarProducto()
+    {
+        Console.Clear();
+        Console.WriteLine("----------------------------------------------------");
+        Console.WriteLine("                       MENU PRODUCTO");
+        Console.WriteLine("----------------------------------------------------");
+        Console.WriteLine("{0,-5} {1,-20}", "Cod.", "Descripcion");
+        //Cambiar la condicion para que muestre todos los articulos 7
+        for (int i = 0; i < contador; i++)
+        {
+            Console.WriteLine("{0,-5} {1,-20}", codigo[i], descripcion[i]);
+        }
+        Console.WriteLine("Ingrese codigo de producto a eliminar:");
+        int codigoEliminar = int.Parse(Console.ReadLine());
+        //para encontrar el indice del array
+        int indiceEliminar = Array.IndexOf(codigo, codigoEliminar);
+        Console.WriteLine("Esta seguro de eliminar el producto? (si/no)");
+        string opcionRespaldo = Console.ReadLine();
+        if (opcionRespaldo.ToLower() == "si")
+        {
+            if (indiceEliminar != -1)
+            {
+                /* Array.Copy: Es un método que copia elementos de un arreglo a otro arreglo.
+                 * numeros: Es el arreglo de origen, es decir, el arreglo del cual queremos copiar los elementos.
+                 * indiceEliminar + 1: Es la posición a partir de la cual queremos comenzar a copiar los elementos. En este caso, es la 
+                 * posición siguiente al cliente que queremos eliminar. 
+                 * numeros: Es el arreglo de destino, es decir, el arreglo en el cual queremos colocar los elementos copiados.
+                 * indiceEliminar: Es la posición en la que queremos colocar los elementos copiados. En este caso, es la posición
+                 * del cliente que queremos eliminar.
+                 * numeros.Length - indiceEliminar - 1: Es la cantidad de elementos que queremos copiar. Restamos indiceEliminar 
+                 * de la longitud total del arreglo numeros y luego restamos 1 para no incluir el cliente que estamos eliminando.
+                 */
+                Array.Copy(codigo, indiceEliminar + 1, codigo, indiceEliminar, codigo.Length - indiceEliminar - 1);
+                Array.Copy(descripcion, indiceEliminar + 1, descripcion, indiceEliminar, descripcion.Length - indiceEliminar - 1);
+                Array.Copy(cantidad, indiceEliminar + 1, cantidad, indiceEliminar, cantidad.Length - indiceEliminar - 1);
+                Array.Copy(precio, indiceEliminar + 1, precio, indiceEliminar, precio.Length - indiceEliminar - 1);
+                Array.Copy(prcTotal, indiceEliminar + 1, prcTotal, indiceEliminar, prcTotal.Length - indiceEliminar - 1);
+                contador--;
+                Console.WriteLine("-------------------------------------------------");
+                Console.WriteLine("MENSAJE: Producto eliminado correctamente");
+                Console.WriteLine("-------------------------------------------------");
+            }
+            else
+            {
+                Console.WriteLine("...............................................................");
+                Console.WriteLine("ERROR/: No se encontró el producto con el número especificado.");
+                Console.WriteLine("...............................................................");
+            }
+
+        }
+        else
+        {
+            Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine("MENSAJE: Producto no eliminado");
+            Console.WriteLine("-------------------------------------------------");
+        }
+    }
+
+    static void AgregarProducto()
+    {
+        // Agregar un nuevo cliente
+        Console.WriteLine("Ingrese los datos del nuevo producto:");
+        Console.Write("Codigo: ");
+        string nuevoCodigoString = Console.ReadLine();
+        if (string.IsNullOrEmpty(nuevoCodigoString) || string.IsNullOrWhiteSpace(nuevoCodigoString))
+        {
+            Console.WriteLine(".............................................");
+            Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+            Console.WriteLine(".............................................");
+            Console.ReadKey();
+        }
+        else
+        {
+
+            bool exito = int.TryParse(nuevoCodigoString, out int nuevoCodigo);
+            int indiceAgregar = Array.IndexOf(codigo, nuevoCodigo);
+            if (indiceAgregar == -1)
+            {
+                Console.Write("Nombre/Descripcion: ");
+                string nuevoNombre = Console.ReadLine();
+                if (string.IsNullOrEmpty(nuevoNombre) || string.IsNullOrWhiteSpace(nuevoNombre))
+                {
+                    Console.WriteLine(".............................................");
+                    Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                    Console.WriteLine(".............................................");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.Write("Cantidad: ");
+                    string nuevaCantidad = Console.ReadLine();
+                    if (string.IsNullOrEmpty(nuevaCantidad) || string.IsNullOrWhiteSpace(nuevaCantidad))
+                    {
+                        Console.WriteLine(".............................................");
+                        Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                        Console.WriteLine(".............................................");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        int nuevaCantidadFinal = int.Parse(nuevaCantidad);
+                        Console.Write("Precio: Q");
+                        string nuevoPrecio = Console.ReadLine();
+                        if (string.IsNullOrEmpty(nuevoPrecio) || string.IsNullOrWhiteSpace(nuevoPrecio))
+                        {
+                            Console.WriteLine(".............................................");
+                            Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                            Console.WriteLine(".............................................");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            decimal nuevoPrecioFinal = decimal.Parse(nuevoPrecio);
+                            codigo[contador] = nuevoCodigo;
+                            descripcion[contador] = nuevoNombre;
+                            cantidad[contador] = nuevaCantidadFinal;
+                            precio[contador] = nuevoPrecioFinal;
+
+                            contador++;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine(".............................................");
+                Console.WriteLine("ERROR/: CODIGO DE PRODUCTO INVALIDO");
+                Console.WriteLine("Ya existe un producto asignado para ese cod.");
+                Console.WriteLine(".............................................");
+                Console.ReadKey();
+            }
+        }
+    }
+
+    static void ActualizarProducto()
+    {
+        Console.WriteLine("{0,-5} {1,-20}", "Cod.", "Descripcion");
+        //Cambiar la condicion para que muestre todos los articulos 7
+        for (int i = 0; i < contador; i++)
+        {
+            Console.WriteLine("{0,-5} {1,-20}", codigo[i], descripcion[i]);
+        }
+
+        Console.WriteLine("Ingrese el codigo de producto a actualizar: ");
+        int numProducto = int.Parse(Console.ReadLine());
+        int indiceActualiza = Array.IndexOf(codigo, numProducto);
+        if (indiceActualiza != -1)
+        {
+            Console.WriteLine("Ingrese los datos del nuevo producto:");
+            Console.Write("Codigo: ");
+            string nuevoCodigoString = Console.ReadLine();
+            if (string.IsNullOrEmpty(nuevoCodigoString) || string.IsNullOrWhiteSpace(nuevoCodigoString))
+            {
+                Console.WriteLine(".............................................");
+                Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                Console.WriteLine(".............................................");
+                Console.ReadKey();
+            }
+            else
+            {
+                bool exito = int.TryParse(nuevoCodigoString, out int nuevoCodigo);
+                int indiceActualizaComprobar = Array.IndexOf(codigo, nuevoCodigo);
+                if (indiceActualizaComprobar != -1)
+                {
+                    Console.WriteLine(".......................................");
+                    Console.WriteLine("ERROR/: Ya existe un producto asignado\n      para ese codigo");
+                    Console.WriteLine(".......................................");
+                    Console.ReadKey();
+                }
+                else
+                {
+                    Console.Write("Nombre/Descripcion: ");
+                    string nuevoNombre = Console.ReadLine();
+                    if (string.IsNullOrEmpty(nuevoNombre) || string.IsNullOrWhiteSpace(nuevoNombre))
+                    {
+                        Console.WriteLine(".............................................");
+                        Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                        Console.WriteLine(".............................................");
+                        Console.ReadKey();
+                    }
+                    else
+                    {
+                        Console.Write("Cantidad: ");
+                        string nuevaCantidadString = Console.ReadLine();
+                        if (string.IsNullOrEmpty(nuevaCantidadString) || string.IsNullOrWhiteSpace(nuevaCantidadString))
+                        {
+                            Console.WriteLine(".............................................");
+                            Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                            Console.WriteLine(".............................................");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            bool listo = int.TryParse(nuevoCodigoString, out int nuevaCantidad);
+                            Console.Write("Precio: Q");
+                            string nuevoPrecioString = Console.ReadLine();
+                            if (string.IsNullOrEmpty(nuevoPrecioString) || string.IsNullOrWhiteSpace(nuevoPrecioString))
+                            {
+                                Console.WriteLine(".............................................");
+                                Console.WriteLine("   ERROR/: Ingreso un valor nulo");
+                                Console.WriteLine(".............................................");
+                                Console.ReadKey();
+                            }
+                            else
+                            {
+                                //cambia de string a decimal   
+                                bool bien = decimal.TryParse(nuevoPrecioString, out decimal nuevoPrecio);
+                                codigo[indiceActualiza] = nuevoCodigo;
+                                descripcion[indiceActualiza] = nuevoNombre;
+                                cantidad[indiceActualiza] = nuevaCantidad;
+                                precio[indiceActualiza] = nuevoPrecio;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine(".................................................");
+            Console.WriteLine("ERROR/: No se encontro producto con ese codigo");
+            Console.WriteLine(".................................................");
+            Console.ReadKey();
+        }
+    }
+
+    static void ConsultarProducto()
+    {
+        Console.WriteLine("Desea ver el inventario completo??\nsi/no");
+        string opcion3Inventario = Console.ReadLine();
+        opcion3Inventario = opcion3Inventario.ToLower();
+        //Si la opcion ingresada es = a "si", se mostrara todo el inventario actual
+        if (opcion3Inventario == "si")
+        {
+            Console.Clear();
+            Console.WriteLine("--------------------------------------------------------------------------------------------");
+            Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+            Console.WriteLine("--------------------------------------------------------------------------------------------");
+            Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio/u", "Total", "Unidad de Medida");
+            //EDITAR PARA MOSTRAR SEGUN LOS QUE DESEA MOSTRAR
+            for (int i = 0; i < contador; i++)
+            {
+                //Mostrando inventario actual
+                Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", codigo[i], descripcion[i], cantidad[i], "Q" + precio[i], ("Q" + (prcTotal[i] = precio[i] * cantidad[i])), "Unidades");
+            }
+        }
+        else
+        {
+            //Opcion ingresado = "no" 7
+            Console.Clear();
+            Console.WriteLine("--------------------------------------------------------------------------------------------");
+            Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+            Console.WriteLine("--------------------------------------------------------------------------------------------");
+            Console.WriteLine("{0,-5} {1,-20}", "Cod.", "Descripcion");
+            for (int i = 0; i < contador; i++)
+            {
+                //Mostrando los productos y codigos unicamente
+                Console.WriteLine("{0,-5} {1,-20}", codigo[i], descripcion[i]);
+            }
+            Console.Write("Ingrese codigo de producto a consultar: ");
+            int codProducConsultar = int.Parse(Console.ReadLine());
+            if (codigo.Contains(codProducConsultar))
+            {
+                //Entra a la seccion de codigo cuando el codigo ingresado esta dentro del array.
+                Console.Clear();
+                Console.WriteLine("--------------------------------------------------------------------------------------------");
+                Console.WriteLine("                             CONSULTAR (MENU INVENTARIO)");
+                Console.WriteLine("--------------------------------------------------------------------------------------------");
+                //Mostrando unico producto, el que se desea ver
+                Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", "Cod.", "Descripcion", "Cantidad", "Precio/u", "Total", "Unidad de Medida");
+                Console.WriteLine("{0,-5} {1,-20} {2,-10} {3,-15} {4,-15} {5,-10}", codigo[codProducConsultar - 1], descripcion[codProducConsultar - 1], cantidad[codProducConsultar - 1], "Q" + precio[codProducConsultar - 1], ("Q" + (prcTotal[codProducConsultar - 1] = precio[codProducConsultar - 1] * cantidad[codProducConsultar - 1])), "Unidades");
+            }
+            else
+            {
+                //Mensaje de error, cuando el codigo ingresando no este dentro del array.
+                Console.Clear();
+                Console.WriteLine("..............................................");
+                Console.WriteLine("   /ERROR: No existe el codigo ingresado");
+                Console.WriteLine("..............................................");
+            }
+        }
+    }
+
+    static void comprobacionLogin()
+    {
+        string user = "";
+        string key = "";
+        bool loginExitoso = false;
+
+        while (!loginExitoso)
+        {
+            Console.Clear();
+            Console.WriteLine("=========================================");
+            Console.WriteLine("********PRODUCTOS DE CONSUMO DIARIO*******");
+            Console.WriteLine("=========================================");
+            Console.WriteLine("Ingrese Usuario: ");
+            user = Console.ReadLine();
+            Console.WriteLine("Ingrese Contraseña: ");
+            key = Console.ReadLine();
+
+            foreach (var tuple in usuarios)
+            {
+                if (tuple.Item1 == user && tuple.Item2 == key)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Clear();
+                    Console.WriteLine("------------------------------------");
+                    Console.WriteLine("         USUARIO CORRECTO");
+                    Console.WriteLine("       CONTRASEÑA CORRECTA");
+                    Console.WriteLine("------------------------------------");
+                    Console.ReadKey();
+                    loginExitoso = true;
+                    Console.ResetColor();
+                    break;
+                }
+            }
+
+            if (!loginExitoso)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Clear();
+                Console.WriteLine("------------------------------------");
+                Console.WriteLine("   USUARIO O CONTRASEÑA INCORRECTA");
+                Console.WriteLine("------------------------------------");
+                Console.ReadKey();
+                Console.ResetColor();
+            }
+        }
+    }
+
+    static void addUsuarios()
+    {
+        string usuarioNuevo = "";
+        string contraseñaNueva = "";
+        bool comprobante = false;
+
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("              AGREGAR USUARIOS");
+            Console.WriteLine("-------------------------------------------");
+            Console.WriteLine("Ingrese nuevo usuario: ");
+            usuarioNuevo = Console.ReadLine();
+
+            // Verificar si el usuarioNuevo está vacío o contiene solo espacios en blanco
+            if (string.IsNullOrWhiteSpace(usuarioNuevo))
+            {
+                Console.Clear();
+                Console.WriteLine(".........................................");
+                Console.WriteLine("ERROR/: Usuario inválido, ingrese otro usuario");
+                Console.WriteLine(".........................................");
+                comprobante = true;
+                Console.ReadKey();
+                Console.Clear();
+                continue;
+            }
+
+            foreach (var tuple in usuarios)
+            {
+                if (tuple.Item1 == usuarioNuevo)
+                {
+                    Console.Clear();
+                    Console.WriteLine(".........................................");
+                    Console.WriteLine("ERROR/: Ya existe, ingrese otro usuario");
+                    Console.WriteLine(".........................................");
+                    return;
+                    Console.ReadKey();
+                    Console.Clear();
+                    break;
+                }
+                else
+                {
+                    comprobante = false;
+                }
+            }
+
+            Console.WriteLine("Ingrese la contraseña: ");
+            contraseñaNueva = Console.ReadLine();
+
+            // Verificar si la contraseñaNueva está vacía o contiene solo espacios en blanco
+            if (string.IsNullOrWhiteSpace(contraseñaNueva))
+            {
+                Console.Clear();
+                Console.WriteLine(".........................................");
+                Console.WriteLine("ERROR/: Contraseña inválida, ingrese otra contraseña");
+                Console.WriteLine(".........................................");
+                comprobante = true;
+                Console.ReadKey();
+                Console.Clear();
+            }
+            else
+            {
+                comprobante = false;
+            }
+        } while (comprobante);
+
+        usuarios.Add((usuarioNuevo, contraseñaNueva));
+        Console.WriteLine("------------------------------------------");
+        Console.WriteLine("    USUARIO AGREGADO CON EXITO");
+        Console.WriteLine("------------------------------------------");
+    }
+
+    static void eliminarUsuario()
+    {
+        int usuarioEliminar = 0;
+        bool encontrado = false;
+
+        do
+        {
+            mostrarUsuario();
+            Console.WriteLine("Ingrese numero de usuario a eliminar: ");
+            usuarioEliminar = int.Parse(Console.ReadLine());
+            usuarioEliminar--;
+            if (usuarioEliminar >= 0 && usuarioEliminar < usuarios.Count)
+            {
+
+                for (int i = 0; i < usuarios.Count; i++)
+                {
+
+                    if (i == usuarioEliminar)
+                    {
+                        Console.WriteLine("Esta seguro de eliminar el usuario: (si/no)");
+                        string elimUsuario = Console.ReadLine();
+                        if (elimUsuario.ToLower() == "si")
+                        {
+                            usuarios.RemoveAt(i);
+                            Console.WriteLine("------------------------------------------");
+                            Console.WriteLine("    USUARIO ELIMINADO CON ÉXITO");
+                            Console.WriteLine("------------------------------------------");
+                            Console.ReadKey();
+                        }
+                        else
+                        {
+                            Console.WriteLine("------------------------------------------");
+                            Console.WriteLine("         USUARIO NO ELIMINADO");
+                            Console.WriteLine("------------------------------------------");
+                            Console.ReadKey();
+                        }
+                        encontrado = true;
+                        break;
+                    }
+                }
+            }
+            if (!encontrado)
+            {
+                Console.Clear();
+                Console.WriteLine(".........................................");
+                Console.WriteLine("ERROR: No existe usuario ingresado");
+                Console.WriteLine(".........................................");
+                Console.ReadKey();
+            }
+        } while (!encontrado);
+
+
+    }
+
+    static void mostrarUsuario()
+    {
+        Console.WriteLine("Usuarios registrados:");
+        int i = 1;
+        foreach (var user in usuarios)
+        {
+            Console.WriteLine("Usuario " + (i) + ": {0}  \tContraseña: {1}", user.Item1, user.Item2);
+            i++;
+        }
+    }
+
+    static void mostrarUsuarioEspecifico()
+    {
+        int numUsuario = 0;
+        Console.WriteLine("Usuarios registrados:");
+        int i = 1;
+        foreach (var user in usuarios)
+        {
+            Console.WriteLine("Usuario " + (i) + ": ***********");
+            i++;
+        }
+        Console.Write("Ingrese numero de usuario a ver: ");
+        numUsuario = int.Parse(Console.ReadLine());
+        numUsuario--;
+        if (numUsuario >= 0 && numUsuario < usuarios.Count)
+        {
+            var usuario = usuarios[numUsuario];
+            Console.WriteLine("Usuario {0}: {1}\tContraseña: {2}", (numUsuario + 1), usuario.Item1, usuario.Item2);
+        }
+        else
+        {
+            Console.WriteLine("-----------------------------------------");
+            Console.WriteLine("ERROR/: Número de usuario inválido");
+            Console.WriteLine("-----------------------------------------");
+        }
+
+
+    }
+
+    static void actualizarUsuarios()
+    {
+        bool comprobante = false;
+        do
+        {
+            mostrarUsuario();
+            Console.Write("Ingrese numero de usuario que desea actualizar: ");
+            int numeroUsuario = int.Parse(Console.ReadLine());
+            numeroUsuario--;
+            if (numeroUsuario >= 0 && numeroUsuario < usuarios.Count)
+            {
+
+                for (int i = 0; i < usuarios.Count; i++)
+                {
+
+                    if (i == numeroUsuario)
+                    {
+                        Console.Write("Ingrese nuevo usuario: ");
+                        string nuevoUsuario = Console.ReadLine();
+                        foreach (var tuple in usuarios)
+                        {
+                            if (tuple.Item1 == nuevoUsuario)
+                            {
+                                Console.Clear();
+                                Console.WriteLine(".........................................");
+                                Console.WriteLine("ERROR/: Ya existe, ingrese otro usuario");
+                                Console.WriteLine(".........................................");
+                                comprobante = true;
+                                Console.ReadKey();
+                                Console.Clear();
+                                break;
+                            }
+                            else
+                            {
+                                comprobante = false;
+                            }
+                        }
+                        if (string.IsNullOrWhiteSpace(nuevoUsuario) || comprobante == true)
+                        {
+                            Console.Clear();
+                            Console.WriteLine(".........................................");
+                            Console.WriteLine("ERROR/: Usuario inválido, ingrese otro usuario");
+                            Console.WriteLine(".........................................");
+                            comprobante = true;
+                            Console.ReadKey();
+                            Console.Clear();
+                            continue;
+
+                        }
+                        else
+                        {
+                            Console.Write("Ingrese nueva contraseña: ");
+                            string nuevaContraseña = Console.ReadLine();
+                            if (string.IsNullOrWhiteSpace(nuevaContraseña))
+                            {
+                                Console.Clear();
+                                Console.WriteLine(".........................................");
+                                Console.WriteLine("ERROR/: Usuario inválido, ingrese otro usuario");
+                                Console.WriteLine(".........................................");
+                                comprobante = true;
+                                Console.ReadKey();
+                                Console.Clear();
+                                continue;
+                            }
+                            else
+                            {
+                                usuarios[numeroUsuario] = (nuevoUsuario, nuevaContraseña);
+                                Console.WriteLine("------------------------------------------");
+                                Console.WriteLine("    USUARIO ACTUALIZADO CON ÉXITO");
+                                Console.WriteLine("------------------------------------------");
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine(".........................................");
+                Console.WriteLine("ERROR: No existe usuario ingresado");
+                Console.WriteLine(".........................................");
+                Console.ReadKey();
+            }
+        } while (comprobante);
+    }
+
+    static void menuFacturacion()
+    {
+        Console.ForegroundColor = ConsoleColor.White;
+        string op_fact = "";
+        do
+        {
+            Console.Clear();
+            Console.WriteLine("=============SISTEMA DE FACTURACION==============");
+            Console.WriteLine();
+
+            Console.WriteLine("----------------MENU FACTURA---------------------");
+            Console.WriteLine("1.Imprimir Factura");
+            Console.WriteLine("2.Salir");
+            Console.Write("Elija una opcion: ");
+            op_fact = Console.ReadLine();
+            Console.Clear();
+            switch (op_fact)
+            {
+
+                case "1":
+                    Console.WriteLine("-------------------------------------------------");
+                    Console.WriteLine("MENSAJE/: Al imprimir la factura la venta se \neliminara del registro");
+                    Console.WriteLine("-------------------------------------------------");
+                    Console.WriteLine("Desea continuar con la facturacion? (si/no)");
+                    string opcionFacturacion = Console.ReadLine();
+                    if (opcionFacturacion.ToLower() == "si")
+                    {
+                        buscarFactura();
+                    }
+                    else
+                    {
+                        Console.WriteLine("-----------------------------------------------");
+                        Console.WriteLine("MENSAJE/: No se facturo ninguna venta");
+                        Console.WriteLine("-----------------------------------------------");
+                        Console.ReadKey();
+                    }
+                    break;
+                case "2":
+                    Console.WriteLine("-----------------------------------------");
+                    Console.WriteLine("    SALIENDO DE MENU FACTURACION");
+                    Console.WriteLine("-----------------------------------------");
+                    break;
+                default:
+                    Console.WriteLine("------------------------------------------");
+                    Console.WriteLine("Opcion invalida");
+                    Console.WriteLine("Por favor, seleccione una opcion correcta");
+                    Console.WriteLine("------------------------------------------");
+                    Console.ReadKey();
+                    break;
+            }
+
+        } while (op_fact != "2");
+        Console.ResetColor();
+    }
+
+    static void buscarFactura()
+    {
+        Console.Clear();
+        Console.WriteLine("=============SISTEMA DE FACTURACION==============");
+        Console.WriteLine();
+        foreach (var venta in ventas)
+        {
+            Console.WriteLine("Venta No. " + venta.Key + "\n");
+        }
+        Console.Write("Ingrese el codigo del venta: ");
+        string codigo_pedido = Console.ReadLine();
+        if (ventas.ContainsKey(codigo_pedido))
+        {
+            Console.WriteLine("La factura es para un cliente registrado? (si/no)");
+            string cliente = Console.ReadLine();
+            if (cliente.ToLower() == "si")
+            {
+                imprimirFacturaClienteExistente(codigo_pedido);
+                eliminarventa(codigo_pedido);
+            }
+            else
+            {
+                imprimirFacturaClienteNoExistente(codigo_pedido);
+                eliminarventa(codigo_pedido);
+            }
+        }
+        else
+        {
+            Console.WriteLine("..............................................");
+            Console.WriteLine("ERROR/: No existe ese número de venta.");
+            Console.WriteLine("..............................................");
+            Console.ReadKey();
+        }
+    }
+
+    static decimal descuentosFactura(decimal descuento)
+    {
+        if (descuento > 1 && descuento < 101)
+        {
+            descuento = descuento * 0.05M;
+        }
+        else if (descuento > 100 && descuento < 201)
+        {
+            descuento = descuento * 0.07M;
+        }
+        else if (descuento > 200)
+        {
+            descuento = descuento * 0.10M;
+        }
+        return descuento;
+    }
+
+    static void imprimirFacturaClienteExistente(string codigoVenta)
+    {
+        Console.Clear();
+        Console.WriteLine("=============SISTEMA DE FACTURACION==============");
+        Console.WriteLine();
+        Console.WriteLine("No.    Nombre      ");
+        for (int i = 0; i < contadorCliente; i++)
+        {
+            if (numeros[i] == 0)
+                break;
+
+            Console.WriteLine($"{numeros[i],-6} {nombres[i],-12}");
+        }
+        Console.Write("Ingrese numero de cliente, para la factura: ");
+        int clienteFactura = int.Parse(Console.ReadLine());
+        int indiceConsultar = Array.IndexOf(numeros, clienteFactura);
+        if (indiceConsultar != -1)
+        {
+            Console.Clear();
+            Console.WriteLine("====================================================================");
+            Console.WriteLine("--------------------------FACTURA CAMBIARIA-------------------------");
+
+            Console.WriteLine("Fecha: {0}", DateTime.Now.ToShortDateString());
+            Console.WriteLine("Hora : {0}", DateTime.Now.ToString("HH:mm:ss"));
+            Console.WriteLine();
+            Console.WriteLine("Cliente: " + nombres[indiceConsultar] + " " + apellidos[indiceConsultar]);
+            Console.WriteLine("Dirección: " + direccion[indiceConsultar]);
+            Console.WriteLine("NIT: " + nits[indiceConsultar]);
+            var productosVentas = ventas[codigoVenta];
+            Console.WriteLine("--------------------------------------------------------------------");
+            Console.WriteLine("Ventas No. " + codigoVenta);
+            Console.WriteLine("--------------------------------------------------------------------");
+            Console.WriteLine("--------------------------------------------------------------------");
+            Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10}", "Cod.", "Descripcion", "Cantidad", "Precio", "Subtotal");
+            decimal subtotalFactura = 0M;
+            foreach (var producto in productosVentas)
+            {
+                Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10}", producto.Item1, producto.Item2, producto.Item3, producto.Item4, producto.Item5);
+                subtotalFactura = producto.Item5 + subtotalFactura;
+            }
+            Console.WriteLine("====================================================================");
+            Console.WriteLine("--------------------------------------------------------------------");
+            decimal iva = 0M;
+            Console.WriteLine("{0,-20} {1,47:C}", "Subtotal: ", subtotalFactura);
+            Console.WriteLine("{0,-20} {1,47:C}", "IVA: ", (iva = subtotalFactura * 0.12M));
+            Console.WriteLine("{0,-20} {1,47:C}", "", "--------------");
+            decimal redondeo = subtotalFactura + iva;
+            Console.WriteLine("{0,-20} {1,47:C}", "", ("" + (redondeo = Math.Round(redondeo, 2))));
+
+            decimal totalT = subtotalFactura + iva;
+            decimal subtotalFacturaIVA = subtotalFactura + iva;
+            decimal descuento = descuentosFactura(totalT);
+            decimal TOTAL = subtotalFacturaIVA - descuento;
+            Console.WriteLine("{0,-20} {1,47:C}", "Descuento: ", descuento);
+
+            Console.WriteLine("--------------------------------------------------------------------");
+            Console.WriteLine("{0,-20} {1,47:C}", "TOTAL: ", TOTAL);
+            Console.WriteLine("--------------------------------------------------------------------");
+            Console.WriteLine("====================================================================");
+            Console.ReadKey();
+        }
+        else
+        {
+            Console.Clear();
+            Console.WriteLine("................................................");
+            Console.WriteLine("ERROR/: Numero de cliente inexistente");
+            Console.WriteLine("................................................");
+        }
+
+    }
+
+    static void imprimirFacturaClienteNoExistente(string codigo)
+    {
+        Console.Clear();
+        Console.WriteLine("=============SISTEMA DE FACTURACION==============");
+        Console.WriteLine();
+        Console.Write("Ingrese nombre: ");
+        string nombreCliente = Console.ReadLine();
+        Console.Write("Ingrese apellido: ");
+        string apellidoCliente = Console.ReadLine();
+        Console.Write("Ingrese direccion: ");
+        string direccionCliente = Console.ReadLine();
+        Console.Write("Ingrese NIT: ");
+        string nitCliente = Console.ReadLine();
+        Console.Clear();
+        Console.WriteLine("====================================================================");
+        Console.WriteLine("--------------------------FACTURA CAMBIARIA-------------------------");
+
+        Console.WriteLine("Fecha: {0}", DateTime.Now.ToShortDateString());
+        Console.WriteLine("Hora : {0}", DateTime.Now.ToString("HH:mm:ss"));
+        Console.WriteLine();
+        Console.WriteLine("Cliente: " + nombreCliente + " " + apellidoCliente);
+        Console.WriteLine("Dirección: " + direccionCliente);
+        Console.WriteLine("NIT: " + nitCliente);
+        var productosVentas = ventas[codigo];
+        Console.WriteLine("--------------------------------------------------------------------");
+        Console.WriteLine("Ventas No. " + codigo);
+        Console.WriteLine("--------------------------------------------------------------------");
+        Console.WriteLine("--------------------------------------------------------------------");
+        Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10}", "Cod.", "Descripcion", "Cantidad", "Precio", "Subtotal");
+        decimal subtotalFactura = 0M;
+        foreach (var producto in productosVentas)
+        {
+            Console.WriteLine("{0,-10} {1,-20} {2, -15} {3,-10} {4,-10}", producto.Item1, producto.Item2, producto.Item3, producto.Item4, producto.Item5);
+            subtotalFactura = producto.Item5 + subtotalFactura;
+        }
+        Console.WriteLine("====================================================================");
+        Console.WriteLine("--------------------------------------------------------------------");
+        decimal iva = 0M;
+        Console.WriteLine("{0,-20} {1,47:C}", "Subtotal: ", subtotalFactura);
+        Console.WriteLine("{0,-20} {1,47:C}", "IVA: ", (iva = subtotalFactura * 0.12M));
+        Console.WriteLine("{0,-20} {1,47:C}", "", "--------------");
+        decimal redondeo = subtotalFactura + iva;
+        Console.WriteLine("{0,-20} {1,47:C}", "", ("" + (redondeo = Math.Round(redondeo, 2))));
+
+        decimal totalT = subtotalFactura + iva;
+        decimal subtotalFacturaIVA = subtotalFactura + iva;
+        decimal descuento = descuentosFactura(totalT);
+        decimal TOTAL = subtotalFacturaIVA - descuento;
+        Console.WriteLine("{0,-20} {1,47:C}", "Descuento: ", descuento);
+
+        Console.WriteLine("--------------------------------------------------------------------");
+        Console.WriteLine("{0,-20} {1,47:C}", "TOTAL: ", TOTAL);
+        Console.WriteLine("--------------------------------------------------------------------");
+        Console.WriteLine("====================================================================");
+        Console.ReadKey();
+    }
+
+    static void eliminarventa(string codigoVenta)
+    {
+        if (ventas.ContainsKey(codigoVenta))
+        {
+            ventas.Remove(codigoVenta);
+            Console.WriteLine("----------------------------------------------");
+            Console.WriteLine("MENSAJE/: La venta {0} ha sido eliminada.", codigoVenta);
+            Console.WriteLine("----------------------------------------------");
+            Console.ReadKey();
+        }
+        else
+        {
+            Console.WriteLine("..............................................................");
+            Console.WriteLine("ERROR/: No se encontró ningún grupo de datos con la clave {0}.", codigoVenta);
+            Console.WriteLine("..............................................................");
+            Console.ReadKey();
+        }
+    }
+}
